@@ -64,7 +64,7 @@ OPERATOR        :
 WHITESPACE      :   (' ' | '\t' | '\n')+ ->skip
 ;
 
-COMMENT         :   '--' ~[\n\r]*
+COMMENT         :   ('--' ~[\n\r]*) ->skip
 ;
 
 
