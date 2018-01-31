@@ -61,7 +61,7 @@ OPERATOR        :
 |   '>='
 ;
 
-WHITESPACE      :   (' ' | '\t' | '\n')+ ->skip
+WHITESPACE      :   (' ' | '\t' | '\n' | '\r')+ ->skip
 ;
 
 COMMENT         :   ('--' ~[\n\r]*) ->skip

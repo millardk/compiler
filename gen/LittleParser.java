@@ -1,4 +1,4 @@
-// Generated from /Users/keegan/IdeaProjects/Compiler/Little.g4 by ANTLR 4.7
+// Generated from C:/Users/fee_c/git/Compiler\Little.g4 by ANTLR 4.7
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
