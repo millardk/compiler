@@ -15,7 +15,7 @@ INTLITERAL      :   DIGIT+
 ;
 FLOATLITERAL    :   DIGIT ? '.' DIGIT+
 ;
-STRINGLITERAL   :   '"'~["\n]*'"'
+STRINGLITERAL   :   '"'~["\n\r]*'"'
 ;
 
 KEYWORD         :
