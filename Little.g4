@@ -63,11 +63,11 @@ return_stmt : 'RETURN' expr ';'
 /* Expressions */
 expr : expr_prefix factor
 ;
-expr_prefix : (expr_prefix factor addop)?
+expr_prefix : expr_prefix factor addop? // | empty
 ;
 factor : factor_prefix postfix_expr
 ;
-factor_prefix : factor_prefix postfix_expr mulop?
+factor_prefix : factor_prefix postfix_expr mulop? // | empty
 ;
 postfix_expr : primary | call_expr?
 ;
