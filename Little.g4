@@ -63,7 +63,13 @@ return_stmt : 'RETURN' expr ';'
 /* Expressions */
 expr : expr_prefix factor
 ;
-expr_prefix : expr_prefix factor addop | // | empty
+//expr_prefix : expr_prefix factor addop | // | empty
+//;
+expr_prefix : expr_prefix_i etail | // | empty
+;
+expr_prefix_i : addop
+;
+etail : factor addop etail?
 ;
 factor : factor_prefix postfix_expr
 ;
@@ -78,7 +84,7 @@ expr_list : expr (expr_list_tail)?
 ;
 expr_list_tail : ',' expr (expr_list_tail)?
 ;
-primary : id | 'INTLITERAL' | 'FLOATLITERAL' // ( expr ) |
+primary : ( expr ) | id | 'INTLITERAL' | 'FLOATLITERAL' //
 ;
 addop : '+' | '-'
 ;
