@@ -65,22 +65,28 @@ expr : expr_prefix factor
 ;
 //expr_prefix : expr_prefix factor addop? // | empty
 //;
+// new rules
 expr_prefix : ei etail
 ;
 ei : addop
 ;
-etail : (factor etail)?
+etail : addop factor etail |
 ;
+
+
 factor : factor_prefix postfix_expr
 ;
 //factor_prefix : factor_prefix postfix_expr mulop? // | empty
 //;
+// new rule
 factor_prefix : ai atail
 ;
-ai : mulop
+ai : postfix_expr
 ;
-atail : postfix_expr mulop atail
+atail : postfix_expr mulop atail |
 ;
+
+
 postfix_expr : primary | call_expr?
 ;
 call_expr : id ( expr_list )
