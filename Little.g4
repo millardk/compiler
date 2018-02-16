@@ -63,11 +63,23 @@ return_stmt : 'RETURN' expr ';'
 /* Expressions */
 expr : expr_prefix factor
 ;
-expr_prefix : expr_prefix factor addop? // | empty
+//expr_prefix : expr_prefix factor addop? // | empty
+//;
+expr_prefix : ei etail
+;
+ei : addop
+;
+etail : (factor etail)?
 ;
 factor : factor_prefix postfix_expr
 ;
-factor_prefix : factor_prefix postfix_expr mulop? // | empty
+//factor_prefix : factor_prefix postfix_expr mulop? // | empty
+//;
+factor_prefix : ai atail
+;
+ai : mulop
+;
+atail : postfix_expr mulop atail
 ;
 postfix_expr : primary | call_expr?
 ;
