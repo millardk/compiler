@@ -9,7 +9,7 @@ id : 'IDENTIFIER'
 ;
 pgm_body : decl func_declarations
 ;
-decl : (string_decl decl | var_decl decl)?
+decl : (string_decl decl | var_decl decl) |
 ;
 /* Global String Declaration */
 string_decl : 'STRING' id ':=' str ';'
@@ -25,17 +25,17 @@ any_type : var_type | 'VOID'
 ;
 id_list : id id_tail
 ;
-id_tail : ',' (id id_tail)?
+id_tail : ',' (id id_tail) |
 ;
 /* Function Paramater List */
 param_decl_list : param_decl param_decl_tail?
 ;
 param_decl : var_type id
 ;
-param_decl_tail : ',' param_decl (param_decl_tail)?
+param_decl_tail : ',' param_decl (param_decl_tail) |
 ;
 /* Function Declarations */
-func_declarations : func_decl (func_declarations)?
+func_declarations : func_decl (func_declarations) |
 ;
 func_decl : 'FUNCTION' any_type id (param_decl_list) 'BEGIN' func_body
 'END'
@@ -43,7 +43,7 @@ func_decl : 'FUNCTION' any_type id (param_decl_list) 'BEGIN' func_body
 func_body : decl stmt_list
 /* Statement List */
 ;
-stmt_list : stmt (stmt_list)?
+stmt_list : stmt (stmt_list) |
 ;
 stmt : base_stmt | if_stmt | while_stmt
 ;
@@ -63,13 +63,14 @@ return_stmt : 'RETURN' expr ';'
 /* Expressions */
 expr : expr_prefix factor
 ;
-expr_prefix : expr_prefix factor addop? // | empty
+expr_prefix : expr_prefix factor addop | // | empty
 ;
 factor : factor_prefix postfix_expr
 ;
-factor_prefix : factor_prefix postfix_expr mulop? // | empty
+factor_prefix : factor_prefix postfix_expr mulop |// | empty
 ;
-postfix_expr : primary | call_expr?
+postfix_expr : primary | call_expr
+
 ;
 call_expr : id ( expr_list )
 ;
@@ -77,7 +78,7 @@ expr_list : expr (expr_list_tail)?
 ;
 expr_list_tail : ',' expr (expr_list_tail)?
 ;
-primary : ( expr ) | id | 'INTLITERAL' | 'FLOATLITERAL'
+primary : id | 'INTLITERAL' | 'FLOATLITERAL' // ( expr ) |
 ;
 addop : '+' | '-'
 ;
