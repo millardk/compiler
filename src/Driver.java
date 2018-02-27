@@ -5,18 +5,18 @@ public class Driver{
     public static void main(String[] args) throws Exception {
 
 
-        String testcase = "./tests/test6.little";
+        String testcase = "./tests/test5.little";
         CharStream cs = CharStreams.fromFileName(testcase);
         LittleLexer lexer = new LittleLexer(cs);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         tokens.fill();
         LittleParser parser = new LittleParser(tokens);
-
+        parser.setErrorHandler(new BailErrorStrategy());
         boolean failed = false;
         try {
             parser.program();
-        } catch(RecognitionException e){
-            System.out.println(e.getOffendingToken().getText());
+        } catch(Exception e){
+            //System.out.println(e.getOffendingToken().getText());
             failed = true;
         }
         if (failed) {
