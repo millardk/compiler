@@ -65,21 +65,13 @@ expr : expr_prefix factor
 ;
 //expr_prefix : (expr_prefix factor addop)?
 //;
-expr_prefix : ei etail |
-;
-ei : addop
-;
-etail : addop factor etail |
+expr_prefix : factor addop expr_prefix |
 ;
 factor : factor_prefix postfix_expr
 ;
 //factor_prefix : (factor_prefix postfix_expr mulop)?
 //;
-factor_prefix : ai atail |
-;
-ai : postfix_expr
-;
-atail : postfix_expr mulop atail |
+factor_prefix : postfix_expr mulop factor_prefix |
 ;
 postfix_expr : primary | call_expr
 ;

@@ -1,4 +1,4 @@
-// Generated from C:/Users/fee_c/git/Compiler\Little.g4 by ANTLR 4.7
+// Generated from /Users/keegan/IdeaProjects/Compiler/Little.g4 by ANTLR 4.7
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -339,30 +339,6 @@ public class LittleBaseListener implements LittleListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterEi(LittleParser.EiContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitEi(LittleParser.EiContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterEtail(LittleParser.EtailContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitEtail(LittleParser.EtailContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterFactor(LittleParser.FactorContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -382,30 +358,6 @@ public class LittleBaseListener implements LittleListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitFactor_prefix(LittleParser.Factor_prefixContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterAi(LittleParser.AiContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAi(LittleParser.AiContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterAtail(LittleParser.AtailContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAtail(LittleParser.AtailContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

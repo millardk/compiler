@@ -1,4 +1,4 @@
-// Generated from C:/Users/fee_c/git/Compiler\Little.g4 by ANTLR 4.7
+// Generated from /Users/keegan/IdeaProjects/Compiler/Little.g4 by ANTLR 4.7
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -277,26 +277,6 @@ public interface LittleListener extends ParseTreeListener {
 	 */
 	void exitExpr_prefix(LittleParser.Expr_prefixContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LittleParser#ei}.
-	 * @param ctx the parse tree
-	 */
-	void enterEi(LittleParser.EiContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LittleParser#ei}.
-	 * @param ctx the parse tree
-	 */
-	void exitEi(LittleParser.EiContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link LittleParser#etail}.
-	 * @param ctx the parse tree
-	 */
-	void enterEtail(LittleParser.EtailContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LittleParser#etail}.
-	 * @param ctx the parse tree
-	 */
-	void exitEtail(LittleParser.EtailContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link LittleParser#factor}.
 	 * @param ctx the parse tree
 	 */
@@ -316,26 +296,6 @@ public interface LittleListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitFactor_prefix(LittleParser.Factor_prefixContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link LittleParser#ai}.
-	 * @param ctx the parse tree
-	 */
-	void enterAi(LittleParser.AiContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LittleParser#ai}.
-	 * @param ctx the parse tree
-	 */
-	void exitAi(LittleParser.AiContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link LittleParser#atail}.
-	 * @param ctx the parse tree
-	 */
-	void enterAtail(LittleParser.AtailContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LittleParser#atail}.
-	 * @param ctx the parse tree
-	 */
-	void exitAtail(LittleParser.AtailContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link LittleParser#postfix_expr}.
 	 * @param ctx the parse tree

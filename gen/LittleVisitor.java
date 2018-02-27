@@ -1,4 +1,4 @@
-// Generated from C:/Users/fee_c/git/Compiler\Little.g4 by ANTLR 4.7
+// Generated from /Users/keegan/IdeaProjects/Compiler/Little.g4 by ANTLR 4.7
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -172,18 +172,6 @@ public interface LittleVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExpr_prefix(LittleParser.Expr_prefixContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LittleParser#ei}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitEi(LittleParser.EiContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LittleParser#etail}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitEtail(LittleParser.EtailContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link LittleParser#factor}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -195,18 +183,6 @@ public interface LittleVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitFactor_prefix(LittleParser.Factor_prefixContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LittleParser#ai}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAi(LittleParser.AiContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LittleParser#atail}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAtail(LittleParser.AtailContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LittleParser#postfix_expr}.
 	 * @param ctx the parse tree
