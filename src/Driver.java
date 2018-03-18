@@ -7,8 +7,7 @@ import java.io.PrintStream;
 public class Driver{
 
     public static void main(String[] args) throws Exception {
-
-        String testcase = "./tests/test9.little";
+        String testcase = args[0];
         CharStream cs = CharStreams.fromFileName(testcase);
         LittleLexer lexer = new LittleLexer(cs);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
