@@ -21,17 +21,26 @@ public class Scope {
     }
 
     public boolean addEntry(Entry e){
-        Scope cur = this;
-        while (cur != null) {
-            if (cur.table.containsKey(e.name)) {
-                System.out.println("DECLARATION ERROR " + e.name);
+//        Scope cur = this;
+//        while (cur != null) {
+//            if (cur.table.containsKey(e.name)) {
+//                e.error = true;
+//                entries.add(e);
+////                System.out.println("DECLARATION ERROR " + e.name);
+//                return false;
+//            }
+//            cur = cur.parent;
+//        }
+
+        if(table.containsKey(e.name)){
+            e.error = true;
+                entries.add(e);
                 return false;
-            }
-            cur = cur.parent;
+        } else {
+            entries.add(e);
+            table.put(e.name, e);
+            return true;
         }
-        entries.add(e);
-        table.put(e.name, e);
-        return true;
     }
 
     public void printTree(){
