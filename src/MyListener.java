@@ -1,6 +1,5 @@
 import java.util.ArrayDeque;
 import java.util.Queue;
-import java.util.Stack;
 
 public class MyListener extends LittleBaseListener {
 
@@ -9,6 +8,7 @@ public class MyListener extends LittleBaseListener {
     declType type = null;
     Queue<String> names = new ArrayDeque<>();
     String lit = null;
+    boolean writable = true;
 
 //    @Override public void enterProgram(LittleParser.ProgramContext ctx) { }
 //
@@ -42,7 +42,9 @@ public class MyListener extends LittleBaseListener {
         lit = ctx.STRINGLITERAL().getText();
     }
 //
-//    @Override public void enterVar_decl(LittleParser.Var_declContext ctx) { }
+//    @Override public void enterVar_decl(LittleParser.Var_declContext ctx) {
+//
+//    }
 
     @Override public void exitVar_decl(LittleParser.Var_declContext ctx) {
         while (names.size() > 0){
@@ -66,14 +68,16 @@ public class MyListener extends LittleBaseListener {
 //    @Override public void exitAny_type(LittleParser.Any_typeContext ctx) { }
 //
     @Override public void enterId_list(LittleParser.Id_listContext ctx) {
-        names.add(ctx.id().IDENTIFIER().getText());
+        if (writable)
+            names.add(ctx.id().IDENTIFIER().getText());
     }
 //
 //    @Override public void exitId_list(LittleParser.Id_listContext ctx) { }
 //
     @Override public void enterId_tail(LittleParser.Id_tailContext ctx) {
-        if (!ctx.getText().isEmpty())
+        if (!ctx.getText().isEmpty()) {
             names.add(ctx.id().IDENTIFIER().getText());
+        }
     }
 //
 //    @Override public void exitId_tail(LittleParser.Id_tailContext ctx) { }
@@ -104,6 +108,7 @@ public class MyListener extends LittleBaseListener {
         Scope s = new Scope(funcName, scope);
         scope.children.add(s);
         scope = s;
+
     }
 
     @Override public void exitFunc_decl(LittleParser.Func_declContext ctx) {
@@ -139,14 +144,22 @@ public class MyListener extends LittleBaseListener {
 //
 //    @Override public void exitAssign_expr(LittleParser.Assign_exprContext ctx) { }
 //
-//    @Override public void enterRead_stmt(LittleParser.Read_stmtContext ctx) { }
-//
-//    @Override public void exitRead_stmt(LittleParser.Read_stmtContext ctx) { }
-//
-//    @Override public void enterWrite_stmt(LittleParser.Write_stmtContext ctx) { }
-//
-//    @Override public void exitWrite_stmt(LittleParser.Write_stmtContext ctx) { }
-//
+    @Override public void enterRead_stmt(LittleParser.Read_stmtContext ctx) {
+        writable = false;
+    }
+
+    @Override public void exitRead_stmt(LittleParser.Read_stmtContext ctx) {
+        writable = true;
+    }
+
+    @Override public void enterWrite_stmt(LittleParser.Write_stmtContext ctx) {
+        writable = false;
+    }
+
+    @Override public void exitWrite_stmt(LittleParser.Write_stmtContext ctx) {
+        writable = true;
+    }
+
 //    @Override public void enterReturn_stmt(LittleParser.Return_stmtContext ctx) { }
 //
 //    @Override public void exitReturn_stmt(LittleParser.Return_stmtContext ctx) { }
@@ -196,7 +209,7 @@ public class MyListener extends LittleBaseListener {
 //    @Override public void exitMulop(LittleParser.MulopContext ctx) { }
 
     @Override public void enterIf_stmt(LittleParser.If_stmtContext ctx) {
-        Scope s = new Scope(String.valueOf(counter++), scope);
+        Scope s = new Scope("BLOCK "+String.valueOf(counter++), scope);
         scope.children.add(s);
         scope = s;
     }
@@ -206,13 +219,16 @@ public class MyListener extends LittleBaseListener {
     }
 
     @Override public void enterElse_part(LittleParser.Else_partContext ctx) {
-        Scope s = new Scope(String.valueOf(counter++), scope);
-        scope.children.add(s);
-        scope = s;
+        if(!ctx.getText().isEmpty()) {
+            Scope s = new Scope("BLOCK "+String.valueOf(counter++), scope);
+            scope.children.add(s);
+            scope = s;
+        }
     }
 
     @Override public void exitElse_part(LittleParser.Else_partContext ctx) {
-        scope = scope.parent;
+        if(!ctx.getText().isEmpty())
+            scope = scope.parent;
     }
 //
 //    @Override public void enterCond(LittleParser.CondContext ctx) { }
@@ -224,7 +240,7 @@ public class MyListener extends LittleBaseListener {
 //    @Override public void exitCompop(LittleParser.CompopContext ctx) { }
 
     @Override public void enterWhile_stmt(LittleParser.While_stmtContext ctx) {
-        Scope s = new Scope(String.valueOf(counter++), scope);
+        Scope s = new Scope("BLOCK "+String.valueOf(counter++), scope);
         scope.children.add(s);
         scope = s;
     }

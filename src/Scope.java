@@ -34,8 +34,10 @@ public class Scope {
 
         if(table.containsKey(e.name)){
             e.error = true;
-                entries.add(e);
-                return false;
+            e.print();
+            System.exit(0);
+            entries.add(e);
+            return false;
         } else {
             entries.add(e);
             table.put(e.name, e);

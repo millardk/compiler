@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 public class Driver{
 
     public static void main(String[] args) throws Exception {
-        String testcase = "./tests/step3/test12.little";
+        String testcase = "./tests/step3/test9.little";
 
         CharStream cs = CharStreams.fromFileName(testcase);
         LittleLexer lexer = new LittleLexer(cs);
