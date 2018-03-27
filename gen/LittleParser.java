@@ -39,7 +39,7 @@ public class LittleParser extends Parser {
 		"var_type", "any_type", "id_list", "id_tail", "param_decl_list", "param_decl", 
 		"param_decl_tail", "func_declarations", "func_decl", "func_body", "stmt_list", 
 		"stmt", "base_stmt", "assign_stmt", "assign_expr", "read_stmt", "write_stmt", 
-		"return_stmt", "expr", "expr_prefix", "factor", "factor_prefix", "postfix_expr", 
+		"return_stmt", "Expr", "expr_prefix", "factor", "factor_prefix", "postfix_expr",
 		"call_expr", "expr_list", "expr_list_tail", "primary", "addop", "mulop", 
 		"if_stmt", "else_part", "cond", "compop", "while_stmt"
 	};

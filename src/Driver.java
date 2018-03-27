@@ -14,9 +14,7 @@ public class Driver{
 
         MyListener l = new MyListener();
         new ParseTreeWalker().walk(l, parser.program());
-
-        l.scope.printTree();
-
+        AST ast = l.ast;
     }
 
 }

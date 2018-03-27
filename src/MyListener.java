@@ -5,7 +5,7 @@ public class MyListener extends LittleBaseListener {
 
     Scope scope = null;
     int counter = 1;
-    declType type = null;
+    Type type = null;
     Queue<String> names = new ArrayDeque<>();
     String lit = null;
     boolean writable = true;
@@ -19,7 +19,7 @@ public class MyListener extends LittleBaseListener {
 //    @Override public void exitId(LittleParser.IdContext ctx) { }
 
     @Override public void enterPgm_body(LittleParser.Pgm_bodyContext ctx) {
-        scope = new Scope("GLOBAL", null);
+        scope = new Scope("GLOBAL");
     }
 
 //    @Override public void exitPgm_body(LittleParser.Pgm_bodyContext ctx) {
@@ -32,7 +32,8 @@ public class MyListener extends LittleBaseListener {
 //    @Override public void enterString_decl(LittleParser.String_declContext ctx) { }
 
     @Override public void exitString_decl(LittleParser.String_declContext ctx) {
-        Entry e = new Entry(ctx.id().getText(), declType.STRING, lit);
+        Entity e = new Entity();
+        e.id = ctx.id();
         scope.addEntry(e);
     }
 //
@@ -62,7 +63,7 @@ public class MyListener extends LittleBaseListener {
             type = declType.INT;
         }
     }
-//
+    //
 //    @Override public void enterAny_type(LittleParser.Any_typeContext ctx) { }
 //
 //    @Override public void exitAny_type(LittleParser.Any_typeContext ctx) { }
@@ -71,7 +72,7 @@ public class MyListener extends LittleBaseListener {
         if (writable)
             names.add(ctx.id().IDENTIFIER().getText());
     }
-//
+    //
 //    @Override public void exitId_list(LittleParser.Id_listContext ctx) { }
 //
     @Override public void enterId_tail(LittleParser.Id_tailContext ctx) {
@@ -114,7 +115,7 @@ public class MyListener extends LittleBaseListener {
     @Override public void exitFunc_decl(LittleParser.Func_declContext ctx) {
         scope = scope.parent;
     }
-//
+    //
 //    @Override public void enterFunc_body(LittleParser.Func_bodyContext ctx) {
 //        System.out.println("scope name"+scope.name);
 //        while(!names.isEmpty()){
