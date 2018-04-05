@@ -1,4 +1,5 @@
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 public class Driver{
@@ -11,10 +12,11 @@ public class Driver{
         CommonTokenStream tokens = new CommonTokenStream(lexer);
 
         LittleParser parser = new LittleParser(tokens);
+        ParseTree tree = parser.program();
 
-        MyListener l = new MyListener();
-        new ParseTreeWalker().walk(l, parser.program());
-        AST ast = l.ast;
+        LittleTestVisitor test = new LittleTestVisitor();
+        test.visit(tree);
+
     }
 
 }
