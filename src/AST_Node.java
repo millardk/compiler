@@ -1,16 +1,18 @@
+import java.util.ArrayList;
 import java.util.List;
 
-public class AST_Node {
+public class AST_Node{
 
     AST_Node parent;
 
 //    public abstract void ad AST_Node n);
 //    public abstract Code getCode();
+
 }
 
 class Program extends AST_Node {
-    List<Decl> decls;
-    List<FuncDecl> f_decls;
+    List<Decl> decls = new ArrayList<>();
+    List<FuncDecl> f_decls = new ArrayList<>();
 }
 
 class Decl extends AST_Node {
@@ -22,22 +24,16 @@ abstract class Expr extends AST_Node {
 }
 
 class FuncCall extends Expr {
-    Entity def;
+    Entity id;
     List<Expr> args;
 }
 
 class OpExpr extends Expr {
 
-    enum NumOp {
-        MUL,
-        DIV,
-        ADD,
-        SUB
-    }
 
-    Expr left = null;
-    Expr right = null;
-    NumOp op = null;
+    Expr left;
+    Expr right;
+    char op;
 
 }
 
@@ -71,7 +67,6 @@ class FuncDecl extends AST_Node {
     String id;
     Type ret;
     List<Entity> params;
-
     List<Decl> decls;
     List<Stmt> stmts;
 }
