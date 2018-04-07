@@ -65,8 +65,12 @@ class FuncDecl extends AST_Node {
     StmtList stmts;
 }
 
-abstract class Expr extends AST_Node {
+class Expr extends AST_Node {
+    Expr parent = null;
+}
 
+class ExprList extends Expr {
+    List<Expr> exprs;
 }
 
 class FuncCall extends Expr {
@@ -75,7 +79,6 @@ class FuncCall extends Expr {
 }
 
 class OpExpr extends Expr {
-
     Expr left;
     Expr right;
     char op;
@@ -93,7 +96,18 @@ class CondExpr extends AST_Node {
         LE,
         GE,
         LT,
-        GT
+        GT;
+
+        static CondType getType(String s){
+            switch(s){
+                case "!=": return NE;
+                case "<=": return LE;
+                case ">=": return GE;
+                case "<": return LT;
+                case ">": return GT;
+                default : return NE;
+            }
+        }
     }
 
     CondType type;
@@ -110,12 +124,9 @@ abstract class Stmt extends AST_Node {
 
 }
 
-class WriteStmt extends Stmt {
-    List<Var> params;
-}
-
-class ReadStmt extends Stmt {
-    List<Var> params;
+class ReadWriteStmt extends Stmt {
+    boolean isRead;
+    List<Var> args;
 }
 
 class WhileStmt extends Stmt {
