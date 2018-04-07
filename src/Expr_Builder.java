@@ -1,19 +1,18 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-
 public class Expr_Builder extends LittleBaseListener{
 
-    List<Expr> exprs = new ArrayList<>();
-    List<Character> ops = new ArrayList<>();
+
+    Expr root = null;
 
     @Override
     public void enterExpr_list(LittleParser.Expr_listContext ctx) {
-        exprs.add(new ExprList());
+        if(root == null)
+            root = new ExprList();
     }
 
     @Override
     public void exitExpr_list(LittleParser.Expr_listContext ctx) {
+
+
         super.exitExpr_list(ctx);
     }
 
@@ -29,11 +28,15 @@ public class Expr_Builder extends LittleBaseListener{
 
     @Override
     public void enterExpr_prefix(LittleParser.Expr_prefixContext ctx) {
+//        if (base == null)
+
+
         super.enterExpr_prefix(ctx);
     }
 
     @Override
     public void exitExpr_prefix(LittleParser.Expr_prefixContext ctx) {
+
         super.exitExpr_prefix(ctx);
     }
 

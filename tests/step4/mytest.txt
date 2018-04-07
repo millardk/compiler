@@ -1,0 +1,15 @@
+PROGRAM mytest
+BEGIN
+
+	INT a, b, i, p;
+	STRING newline := "\n";
+
+	FUNCTION VOID main()
+	BEGIN
+	    INT c;
+        c := 2;
+
+		--WRITE (a, newline);
+		--WRITE (b, newline);
+	END
+END

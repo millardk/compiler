@@ -1,21 +1,28 @@
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 class AST_Node{
 
+    static BufferedWriter bf = new BufferedWriter(new OutputStreamWriter(System.out));
 //    public abstract void ad AST_Node n);
 //    public abstract Code getCode();
-    void print(){ }
+    void print() throws java.io.IOException{ }
 }
 
 class Program extends AST_Node{
+    SymbolTable table;
     VarDeclList globals;
     List<FuncDecl> funcs;
 
-    void print() {
-        System.out.println("Printing Program.");
+    void print() throws  java.io.IOException{
+        bf.write("Global Vars."+"\n");
         globals.print();
-//        f.print();
+        bf.write("Functions:"+'\n');
+        for(FuncDecl f : funcs)
+            f.print();
+        bf.flush();
     }
 
 }
@@ -23,13 +30,12 @@ class Program extends AST_Node{
 class VarDeclList extends AST_Node{
     List<Var> vars = new ArrayList<>();
 
-    void print() {
-        System.out.println("VarDecl");
-        for (Var e : vars)
-            e.print();
+    void print() throws java.io.IOException{
+        for (Var var : vars) {
+            bf.write(var+"\n");
+        }
     }
 }
-
 
 class Var {
     Type type;
@@ -48,44 +54,83 @@ class Var {
         this.litVal = lit;
     }
 
-    void print(){
-        if (type == Type.STRING){
-            System.out.println("E: STRING "+id+" "+litVal);
-        } else {
-            System.out.println("E: "+type+" "+id);
-        }
+    @Override
+    public String toString() {
+        if(type == Type.STRING)
+            return type+" "+id+" "+litVal;
+        else
+            return type+" "+id;
     }
 }
 
 class FuncDecl extends AST_Node {
+    SymbolTable table;
     String id;
     Type retType;
     List<Var> params;
     VarDeclList decl;
     StmtList stmts;
+
+    void print() throws java.io.IOException{
+        bf.write(retType+" "+id+"(");
+        for(int i = 0; i < params.size(); i++)
+            if (i != params.size()-1)
+                bf.write(params.get(i)+",");
+        bf.write(") "+'\n');
+        decl.print();
+        stmts.print();
+        bf.write('\n');
+    }
 }
 
 class Expr extends AST_Node {
-    Expr parent = null;
 }
 
 class ExprList extends Expr {
     List<Expr> exprs;
 }
 
-class FuncCall extends Expr {
-    Var id;
-    List<Expr> args;
+class CallExpr extends Expr {
+    FuncDecl func;
+    ExprList args;
 }
 
-class OpExpr extends Expr {
+class VarExpr extends Expr {
+    Var var;
+}
+
+class BinExpr extends Expr {
+
+    enum OpType {
+        ADD,
+        SUB,
+        MUL,
+        DIV,
+        NULL;
+
+        static OpType getType(String s){
+            switch (s.charAt(0)){
+                case '+' : return ADD;
+                case '-' : return SUB;
+                case '*' : return MUL;
+                case '/' : return DIV;
+                default : return NULL;
+            }
+
+        }
+
+    }
+
     Expr left;
     Expr right;
-    char op;
+    OpType op;
 }
 
-class Number extends Expr {
-    boolean isInt;
+class Int_Lit extends Expr {
+    int value;
+}
+
+class Float_Lit extends Expr {
     String value;
 }
 

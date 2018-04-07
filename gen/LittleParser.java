@@ -35,7 +35,7 @@ public class LittleParser extends Parser {
 		RULE_mulop = 35, RULE_if_stmt = 36, RULE_else_part = 37, RULE_cond = 38, 
 		RULE_compop = 39, RULE_while_stmt = 40;
 	public static final String[] ruleNames = {
-		"program", "id", "pgm_body", "decl", "string_decl", "str", "var_decl", 
+		"program", "var", "pgm_body", "decl", "string_decl", "str", "var_decl",
 		"var_type", "any_type", "id_list", "id_tail", "param_decl_list", "param_decl", 
 		"param_decl_tail", "func_declarations", "func_decl", "func_body", "stmt_list", 
 		"stmt", "base_stmt", "assign_stmt", "assign_expr", "read_stmt", "write_stmt", 

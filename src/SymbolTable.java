@@ -43,7 +43,7 @@ class SymbolTable {
         }
     }
 
-    Var get(String id){
+    Var getVarRef(String id){
         SymbolTable cur = this;
         while (cur != null) {
             Var v = cur.varMap.get(id);
@@ -52,6 +52,10 @@ class SymbolTable {
             cur = cur.parent;
         }
         return null;
+    }
+
+    FuncDecl getFuncRef(String id){
+        return funcMap.get(id);
     }
 
 
