@@ -1,14 +1,17 @@
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 class AST_Node{
 
-    static BufferedWriter bf = new BufferedWriter(new OutputStreamWriter(System.out));
-//    public abstract void ad AST_Node n);
-//    public abstract Code getCode();
-    void print() throws java.io.IOException{ }
+    List<AST_Node> getChildren(){
+        return new LinkedList<>();
+    }
+
+//    static BufferedWriter bf = new BufferedWriter(new OutputStreamWriter(System.out));
+//    void print() throws java.io.IOException{}
 }
 
 class Program extends AST_Node{
@@ -16,25 +19,33 @@ class Program extends AST_Node{
     VarDeclList globals;
     List<FuncDecl> funcs;
 
-    void print() throws  java.io.IOException{
-        bf.write("Global Vars."+"\n");
-        globals.print();
-        bf.write("Functions:"+'\n');
-        for(FuncDecl f : funcs)
-            f.print();
-        bf.flush();
-    }
+//    void print() throws  java.io.IOException{
+//        bf.write("Global Vars."+"\n");
+//        globals.print();
+//        bf.write("Functions:"+'\n');
+//        for(FuncDecl f : funcs)
+//            f.print();
+//        bf.flush();
+//    }
 
+    @Override
+    List<AST_Node> getChildren() {
+        List<AST_Node> ret = new LinkedList<>();
+        ret.addAll(globals.getChildren());
+        for(FuncDecl f : funcs)
+            ret.addAll(f.getChildren());
+        return ret;
+    }
 }
 
 class VarDeclList extends AST_Node{
     List<Var> vars = new ArrayList<>();
 
-    void print() throws java.io.IOException{
-        for (Var var : vars) {
-            bf.write(var+"\n");
-        }
-    }
+//    void print() throws java.io.IOException{
+//        for (Var var : vars) {
+//            bf.write(var+"\n");
+//        }
+//    }
 }
 
 class Var {
@@ -61,6 +72,7 @@ class Var {
         else
             return type+" "+id;
     }
+
 }
 
 class FuncDecl extends AST_Node {
@@ -71,16 +83,16 @@ class FuncDecl extends AST_Node {
     VarDeclList decl;
     StmtList stmts;
 
-    void print() throws java.io.IOException{
-        bf.write(retType+" "+id+"(");
-        for(int i = 0; i < params.size(); i++)
-            if (i != params.size()-1)
-                bf.write(params.get(i)+",");
-        bf.write(") "+'\n');
-        decl.print();
-        stmts.print();
-        bf.write('\n');
-    }
+//    void print() throws java.io.IOException{
+//        bf.write(retType+" "+id+"(");
+//        for(int i = 0; i < params.size(); i++)
+//            if (i != params.size()-1)
+//                bf.write(params.get(i)+",");
+//        bf.write(") "+'\n');
+//        decl.print();
+//        stmts.print();
+//        bf.write('\n');
+//    }
 }
 
 class Expr extends AST_Node {

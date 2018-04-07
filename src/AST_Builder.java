@@ -8,7 +8,7 @@ class AST_Builder {
     Program create(LittleParser.ProgramContext ctx){
         Program p = new Program();
         LittleParser.Pgm_bodyContext body = ctx.pgm_body();
-        table = new SymbolTable();
+        table = new SymbolTable(null, false);
         p.table = table;
         p.globals = create(body.decl());
         p.funcs = create(body.func_declarations());
@@ -61,7 +61,7 @@ class AST_Builder {
     FuncDecl create(LittleParser.Func_declContext ctx){
         // NEW SYMBOLTABLE
         FuncDecl func = new FuncDecl();
-        table = new SymbolTable(table);
+        table = new SymbolTable(table, false);
         func.table = table;
 
         // GET ID
@@ -101,7 +101,7 @@ class AST_Builder {
         } else if (ctx.if_stmt() != null){
         // IF STATEMENT
             IfStmt stmt = new IfStmt();
-            table = new SymbolTable(table);
+            table = new SymbolTable(table, true);
             stmt.table = table;
             stmt.condition = create(ctx.if_stmt().cond());
             stmt.body_then = create(ctx.if_stmt().stmt_list());
@@ -112,7 +112,7 @@ class AST_Builder {
         } else {
         // WHILE STATEMENT
             WhileStmt stmt = new WhileStmt();
-            table = new SymbolTable(table);
+            table = new SymbolTable(table, true);
             stmt.table = table;
             stmt.cond = create(ctx.while_stmt().cond());
             stmt.decls = create(ctx.while_stmt().decl());
@@ -128,7 +128,7 @@ class AST_Builder {
             return null;
         else {
             ElsePart e = new ElsePart();
-            table = new SymbolTable(table);
+            table = new SymbolTable(table, true);
             e.table = table;
             e.vars = create(ctx.decl());
             e.stmts = create(ctx.stmt_list());

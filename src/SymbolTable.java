@@ -6,16 +6,17 @@ import java.util.List;
 class SymbolTable {
 
     static HashMap<String, FuncDecl> funcMap = new HashMap<>();
+    // block symbol tables cannot share references
+    boolean isBlock = true;
 
     HashMap<String, Var> varMap = new HashMap<>();
     List<Var> varlist = new ArrayList<>();
 
     SymbolTable parent = null;
 
-    SymbolTable(){}
-
-    SymbolTable(SymbolTable parent){
+    SymbolTable(SymbolTable parent, boolean isBlock){
         this.parent = parent;
+        this.isBlock = isBlock;
     }
 
     static void add(FuncDecl f) {
@@ -27,31 +28,44 @@ class SymbolTable {
     }
 
     void add(Var e){
-        SymbolTable cur = this;
-        boolean err = false;
 
+        boolean err = false;
+        if(varMap.containsKey(e.id))
+            err = true;
+
+        SymbolTable cur = this;
         while(!err && cur != null) {
-            if (varMap.containsKey(e.id)) {
-                System.err.println("Var Declaration error " + e.id);
+            if (!cur.isBlock && cur.varMap.containsKey(e.id)) {
                 err = true;
             }
             cur = cur.parent;
         }
-        if (!err) {
+
+        if(err) {
+            System.err.println("Var Declaration error " + e.id);
+        } else {
             varMap.put(e.id, e);
             varlist.add(e);
         }
     }
 
     Var getVarRef(String id){
-        SymbolTable cur = this;
-        while (cur != null) {
-            Var v = cur.varMap.get(id);
-            if (v != null)
-                return v;
-            cur = cur.parent;
+        Var ret = varMap.get(id);
+
+        if(ret != null){
+            return ret;
+        } else {
+            SymbolTable cur = parent;
+            while(cur != null){
+                ret = cur.varMap.get(id);
+                if(!cur.isBlock && ret != null)
+                    return ret;
+
+                cur = cur.parent;
+            }
+            return null;
         }
-        return null;
+
     }
 
     FuncDecl getFuncRef(String id){
