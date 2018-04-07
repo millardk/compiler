@@ -5,17 +5,21 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 public class Driver{
 
     public static void main(String[] args) throws Exception {
-        String testcase = "./tests/step3/test9.little";
+        String testcase = "./tests/old/test9.little";
 
         CharStream cs = CharStreams.fromFileName(testcase);
         LittleLexer lexer = new LittleLexer(cs);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-
         LittleParser parser = new LittleParser(tokens);
-        ParseTree tree = parser.program();
 
-        LittleTestVisitor test = new LittleTestVisitor();
-        test.visit(tree);
+        AST_Builder builder = new AST_Builder();
+        Program p = builder.create(parser.program());
+        p.print();
+
+//        LittleTestVisitor test = new LittleTestVisitor();
+//        test.visit(tree);
+
+
 
     }
 

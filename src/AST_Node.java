@@ -1,22 +1,68 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class AST_Node{
-
-    AST_Node parent;
+class AST_Node{
 
 //    public abstract void ad AST_Node n);
 //    public abstract Code getCode();
+    void print(){ }
+}
+
+class Program extends AST_Node{
+    VarDeclList globals;
+    List<FuncDecl> funcs;
+
+    void print() {
+        System.out.println("Printing Program.");
+        globals.print();
+//        f.print();
+    }
 
 }
 
-class Program extends AST_Node {
-    List<Decl> decls = new ArrayList<>();
-    List<FuncDecl> f_decls = new ArrayList<>();
+class VarDeclList extends AST_Node{
+    List<Var> vars = new ArrayList<>();
+
+    void print() {
+        System.out.println("VarDecl");
+        for (Var e : vars)
+            e.print();
+    }
 }
 
-class Decl extends AST_Node {
-    Entity e;
+
+class Var {
+    Type type;
+    String id;
+    String litVal;
+
+    Var(Type type, String id) {
+        this.type = type;
+        this.id = id;
+        litVal = null;
+    }
+
+    Var(String id, String lit) {
+        type = Type.STRING;
+        this.id = id;
+        this.litVal = lit;
+    }
+
+    void print(){
+        if (type == Type.STRING){
+            System.out.println("E: STRING "+id+" "+litVal);
+        } else {
+            System.out.println("E: "+type+" "+id);
+        }
+    }
+}
+
+class FuncDecl extends AST_Node {
+    String id;
+    Type retType;
+    List<Var> params;
+    VarDeclList decl;
+    StmtList stmts;
 }
 
 abstract class Expr extends AST_Node {
@@ -24,28 +70,21 @@ abstract class Expr extends AST_Node {
 }
 
 class FuncCall extends Expr {
-    Entity id;
+    Var id;
     List<Expr> args;
 }
 
 class OpExpr extends Expr {
 
-
     Expr left;
     Expr right;
     char op;
-
 }
 
 class Number extends Expr {
     boolean isInt;
     String value;
 }
-
-class StringLit extends Expr {
-    String lit;
-}
-
 
 class CondExpr extends AST_Node {
 
@@ -63,12 +102,8 @@ class CondExpr extends AST_Node {
 
 }
 
-class FuncDecl extends AST_Node {
-    String id;
-    Type ret;
-    List<Entity> params;
-    List<Decl> decls;
-    List<Stmt> stmts;
+class StmtList extends  AST_Node {
+    List<Stmt> stmts = new ArrayList<>();
 }
 
 abstract class Stmt extends AST_Node {
@@ -76,29 +111,40 @@ abstract class Stmt extends AST_Node {
 }
 
 class WriteStmt extends Stmt {
-    List<Entity> params;
+    List<Var> params;
 }
 
 class ReadStmt extends Stmt {
-    List<Entity> params;
+    List<Var> params;
 }
 
 class WhileStmt extends Stmt {
+    SymbolTable table;
     CondExpr cond;
-    List<Decl> decls;
-    List<Stmt> stmts;
+    VarDeclList decls;
+    StmtList stmts;
 }
 
-class IfStmt {
-
+class IfStmt extends Stmt{
+    SymbolTable table;
     CondExpr condition;
-    List<Stmt> body_then;
-    List<Stmt> body_else;
+    StmtList body_then;
+    ElsePart body_else;
+}
+
+class ElsePart extends Stmt {
+    SymbolTable table;
+    VarDeclList vars;
+    StmtList stmts;
+}
+
+class AssignStmt extends Stmt {
+    Var var;
+    Expr expr;
 
 }
 
-class AssignStmt extends AST_Node {
-    Entity e;
+class ReturnStmt extends Stmt {
     Expr expr;
 
 }
