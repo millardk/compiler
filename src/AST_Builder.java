@@ -16,7 +16,7 @@ class AST_Builder {
     }
 
     VarDeclList create(LittleParser.DeclContext ctx) {
-        VarDeclList decls = new VarDeclList();
+        List<Var> vars = new ArrayList<>();
         while(ctx != null) {
             if (ctx.var_decl() != null) {
                 Type type = Type.getType(ctx.var_decl().var_type().getText());
@@ -24,17 +24,20 @@ class AST_Builder {
                 for(String id : ids) {
                     Var v = new Var(type, id);
                     table.add(v);
-                    decls.vars.add(v);
+                    vars.add(v);
                 }
             } else if (ctx.string_decl() != null){
                 LittleParser.String_declContext strCtx = ctx.string_decl();
                 Var e = new Var(strCtx.id().getText(), strCtx.str().STRINGLITERAL().getText());
-                decls.vars.add(e);
+                vars.add(e);
             }
             ctx = ctx.decl();
         }
+        VarDeclList declList = new VarDeclList();
+        for(Var v : vars)
+            declList.decls.add(new VarDecl(v));
 
-        return decls;
+        return declList;
     }
 
     List<String> create(LittleParser.Id_listContext ctx){
@@ -103,7 +106,7 @@ class AST_Builder {
             IfStmt stmt = new IfStmt();
             table = new SymbolTable(table, true);
             stmt.table = table;
-            stmt.condition = create(ctx.if_stmt().cond());
+            stmt.cond = create(ctx.if_stmt().cond());
             stmt.body_then = create(ctx.if_stmt().stmt_list());
             stmt.body_else = create(ctx.if_stmt().else_part());
 
@@ -119,7 +122,7 @@ class AST_Builder {
             stmt.stmts = create(ctx.while_stmt().stmt_list());
 
             table = table.parent;
-            return new WhileStmt();
+            return stmt;
         }
     }
 

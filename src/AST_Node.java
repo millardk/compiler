@@ -1,5 +1,3 @@
-import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,11 +5,15 @@ import java.util.List;
 class AST_Node{
 
     List<AST_Node> getChildren(){
-        return new LinkedList<>();
+        List<AST_Node> ret = new LinkedList<>();
+        ret.add(this);
+        return ret;
     }
 
-//    static BufferedWriter bf = new BufferedWriter(new OutputStreamWriter(System.out));
-//    void print() throws java.io.IOException{}
+    @Override
+    public String toString() {
+        return getClass().toString();
+    }
 }
 
 class Program extends AST_Node{
@@ -19,92 +21,74 @@ class Program extends AST_Node{
     VarDeclList globals;
     List<FuncDecl> funcs;
 
-//    void print() throws  java.io.IOException{
-//        bf.write("Global Vars."+"\n");
-//        globals.print();
-//        bf.write("Functions:"+'\n');
-//        for(FuncDecl f : funcs)
-//            f.print();
-//        bf.flush();
-//    }
-
     @Override
     List<AST_Node> getChildren() {
         List<AST_Node> ret = new LinkedList<>();
         ret.addAll(globals.getChildren());
         for(FuncDecl f : funcs)
             ret.addAll(f.getChildren());
+        ret.add(this);
         return ret;
     }
 }
 
 class VarDeclList extends AST_Node{
-    List<Var> vars = new ArrayList<>();
+    List<VarDecl> decls = new ArrayList<>();
 
-//    void print() throws java.io.IOException{
-//        for (Var var : vars) {
-//            bf.write(var+"\n");
-//        }
-//    }
+    List<AST_Node> getChildren(){
+        List<AST_Node> ret = new LinkedList<>();
+        ret.addAll(decls);
+        return ret;
+    }
 }
 
-class Var {
-    Type type;
-    String id;
-    String litVal;
-
-    Var(Type type, String id) {
-        this.type = type;
-        this.id = id;
-        litVal = null;
+class VarDecl extends AST_Node {
+    Var var;
+    VarDecl(Var var){
+        this.var = var;
     }
-
-    Var(String id, String lit) {
-        type = Type.STRING;
-        this.id = id;
-        this.litVal = lit;
-    }
-
-    @Override
-    public String toString() {
-        if(type == Type.STRING)
-            return type+" "+id+" "+litVal;
-        else
-            return type+" "+id;
-    }
-
 }
 
 class FuncDecl extends AST_Node {
     SymbolTable table;
     String id;
-    Type retType;
-    List<Var> params;
-    VarDeclList decl;
-    StmtList stmts;
+    Type retType = null;
+    List<Var> params = null;
+    VarDeclList decl = null;
+    StmtList stmts = null;
 
-//    void print() throws java.io.IOException{
-//        bf.write(retType+" "+id+"(");
-//        for(int i = 0; i < params.size(); i++)
-//            if (i != params.size()-1)
-//                bf.write(params.get(i)+",");
-//        bf.write(") "+'\n');
-//        decl.print();
-//        stmts.print();
-//        bf.write('\n');
-//    }
+    List<AST_Node> getChildren(){
+        List<AST_Node> ret = new LinkedList<>();
+        if (decl != null)
+            ret.addAll(decl.getChildren());
+        if (stmts != null)
+            ret.addAll(stmts.getChildren());
+        ret.add(this);
+        return ret;
+    }
+
 }
 
 class Expr extends AST_Node {
+
 }
 
 class ExprList extends Expr {
     List<Expr> exprs;
+
+    List<AST_Node> getChildren(){
+        List<AST_Node> ret = new LinkedList<>();
+        for(Expr e : exprs)
+            ret.addAll(e.getChildren());
+        ret.add(this);
+        return ret;
+    }
 }
 
 class CallExpr extends Expr {
     FuncDecl func;
     ExprList args;
+
 }
 
 class VarExpr extends Expr {
@@ -136,6 +120,14 @@ class BinExpr extends Expr {
     Expr left;
     Expr right;
     OpType op;
+
+    List<AST_Node> getChildren(){
+        List<AST_Node> ret = new LinkedList<>();
+        ret.addAll(left.getChildren());
+        ret.addAll(right.getChildren());
+        ret.add(this);
+        return ret;
+    }
 }
 
 class Int_Lit extends Expr {
@@ -171,10 +163,26 @@ class CondExpr extends AST_Node {
     Expr left;
     Expr right;
 
+    List<AST_Node> getChildren(){
+        List<AST_Node> ret = new LinkedList<>();
+        ret.addAll(left.getChildren());
+        ret.addAll(right.getChildren());
+        ret.add(this);
+        return ret;
+    }
+
 }
 
 class StmtList extends  AST_Node {
     List<Stmt> stmts = new ArrayList<>();
+
+    List<AST_Node> getChildren(){
+        List<AST_Node> ret = new LinkedList<>();
+        for(Stmt s : stmts)
+            ret.addAll(s.getChildren());
+        return ret;
+    }
+
 }
 
 abstract class Stmt extends AST_Node {
@@ -184,38 +192,100 @@ abstract class Stmt extends AST_Node {
 class ReadWriteStmt extends Stmt {
     boolean isRead;
     List<Var> args;
+
 }
 
 class WhileStmt extends Stmt {
     SymbolTable table;
-    CondExpr cond;
-    VarDeclList decls;
-    StmtList stmts;
+    CondExpr cond = null;
+    VarDeclList decls = null;
+    StmtList stmts = null;
+
+    List<AST_Node> getChildren(){
+        List<AST_Node> ret = new LinkedList<>();
+        ret.addAll(decls.getChildren());
+        ret.addAll(stmts.getChildren());
+        ret.add(this);
+        ret.addAll(cond.getChildren());
+        return ret;
+    }
 }
 
 class IfStmt extends Stmt{
     SymbolTable table;
-    CondExpr condition;
-    StmtList body_then;
-    ElsePart body_else;
+    CondExpr cond = null;
+    StmtList body_then = null;
+    ElsePart body_else = null;
+
+    List<AST_Node> getChildren(){
+        List<AST_Node> ret = new LinkedList<>();
+        ret.addAll(body_then.getChildren());
+        if (body_else != null)
+                ret.addAll(body_else.getChildren());
+        ret.add(this);
+        ret.addAll(cond.getChildren());
+        return ret;
+    }
 }
 
 class ElsePart extends Stmt {
     SymbolTable table;
-    VarDeclList vars;
-    StmtList stmts;
+    VarDeclList vars = null;
+    StmtList stmts = null;
+
+    List<AST_Node> getChildren(){
+        List<AST_Node> ret = new LinkedList<>();
+        ret.addAll(vars.getChildren());
+        ret.addAll(stmts.getChildren());
+        ret.add(this);
+        return ret;
+    }
 }
 
 class AssignStmt extends Stmt {
     Var var;
     Expr expr;
 
+    List<AST_Node> getChildren(){
+        List<AST_Node> ret  = new LinkedList<>();
+        ret.add(var);
+        ret.addAll(expr.getChildren());
+        ret.add(this);
+        return ret;
+    }
 }
 
 class ReturnStmt extends Stmt {
     Expr expr;
 
+    List<AST_Node> getChildren(){
+        List<AST_Node> ret  = new LinkedList<>();
+        ret.addAll(expr.getChildren());
+        ret.add(this);
+        return ret;
+    }
+
 }
+
+class Var extends AST_Node{
+    Type type;
+    String id;
+    String litVal;
+
+    Var(Type type, String id) {
+        this.type = type;
+        this.id = id;
+        litVal = null;
+    }
+
+    Var(String id, String lit) {
+        type = Type.STRING;
+        this.id = id;
+        this.litVal = lit;
+    }
+
+}
+
 
 
 
