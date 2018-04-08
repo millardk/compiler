@@ -14,6 +14,7 @@ class AST_Node{
     public String toString() {
         return getClass().toString();
     }
+
 }
 
 class Program extends AST_Node{
