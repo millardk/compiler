@@ -34,7 +34,7 @@ public class TinyProgram {
                     TinyIns ins = convert(atom);
                     if (ins != null)
                         insList.add(ins);
-                }else {
+                } else {
                     insList.addAll(convertList(atom));
                 }
                 atom = atom.next;
