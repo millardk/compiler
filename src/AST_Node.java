@@ -46,8 +46,6 @@ class FuncDecl extends AST_Node {
         code.append(new Atom(IR.LABEL, id));
         code.append(new Atom(IR.LINK));
         code.append(stmts.getCode());
-        if(id.equals("main"))
-            code.append(new Atom(IR.HALT));
         return code;
     }
 }

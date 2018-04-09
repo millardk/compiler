@@ -18,6 +18,9 @@ public class Driver{
 
         Code code = p.getCode();
         code.print();
+        System.out.println("------------------TINY-CODE------------------");
+        TinyProgram tiny = new TinyProgram(code, p.table.varlist);
+        tiny.print();
     }
 
 }

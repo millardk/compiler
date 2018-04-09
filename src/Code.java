@@ -130,15 +130,6 @@ class Atom {
 }
 
 enum IR{
-
-    ADDI,
-    SUBI,
-    MULTI,
-    DIVI,
-    ADDF,
-    SUBF,
-    MULTF,
-    DIVF,
     STOREI,
     STOREF,
     READI,
@@ -148,9 +139,17 @@ enum IR{
     WRITES,
     LABEL,
     JUMP,
-    HALT,
-    RET,
     LINK,
+    RET,
+    ERROR,
+    ADDI,
+    SUBI,
+    MULTI,
+    DIVI,
+    ADDF,
+    SUBF,
+    MULTF,
+    DIVF,
     GT,
     GE,
     LT,
@@ -163,5 +162,5 @@ enum IR{
     LEI,
     NEI,
     EQI,
-    ERROR,
+
 }

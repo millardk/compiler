@@ -5,7 +5,7 @@ import java.util.List;
 class SymbolTable {
 
     static HashMap<String, FuncDecl> funcMap = new HashMap<>();
-    static int tempCount = 0;
+    static int tempCount = 1;
 
     // block symbol tables cannot share references
     boolean isBlock = true;
@@ -88,7 +88,7 @@ class SymbolTable {
     }
 
     static String makeTemp(){
-        return "T"+tempCount++;
+        return "$T"+tempCount++;
     }
 
 }
