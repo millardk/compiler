@@ -1,20 +1,11 @@
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 class AST_Node{
 
-    List<AST_Node> getChildren(){
-        List<AST_Node> ret = new LinkedList<>();
-        ret.add(this);
-        return ret;
+    Code getCode(){
+        return null;
     }
-
-    @Override
-    public String toString() {
-        return getClass().toString();
-    }
-
 }
 
 class Program extends AST_Node{
@@ -22,25 +13,16 @@ class Program extends AST_Node{
     VarDeclList globals;
     List<FuncDecl> funcs;
 
-    @Override
-    List<AST_Node> getChildren() {
-        List<AST_Node> ret = new LinkedList<>();
-        ret.addAll(globals.getChildren());
+    Code getCode(){
+        Code code = new Code();
         for(FuncDecl f : funcs)
-            ret.addAll(f.getChildren());
-        ret.add(this);
-        return ret;
+            code.insert(f.getCode());
+        return code;
     }
 }
 
 class VarDeclList extends AST_Node{
     List<VarDecl> decls = new ArrayList<>();
-
-    List<AST_Node> getChildren(){
-        List<AST_Node> ret = new LinkedList<>();
-        ret.addAll(decls);
-        return ret;
-    }
 }
 
 class VarDecl extends AST_Node {
@@ -51,49 +33,67 @@ class VarDecl extends AST_Node {
 }
 
 class FuncDecl extends AST_Node {
-    SymbolTable table;
-    String id;
+    SymbolTable table = null;
+    String id = null;
     Type retType = null;
     List<Var> params = null;
     VarDeclList decl = null;
     StmtList stmts = null;
 
-    List<AST_Node> getChildren(){
-        List<AST_Node> ret = new LinkedList<>();
-        if (decl != null)
-            ret.addAll(decl.getChildren());
-        if (stmts != null)
-            ret.addAll(stmts.getChildren());
-        ret.add(this);
-        return ret;
+    @Override
+    Code getCode() {
+        Code code = new Code();
+        code.append(new Atom(IR.LABEL, id));
+        code.append(new Atom(IR.LINK));
+        code.append(stmts.getCode());
+        if(id.equals("main"))
+            code.append(new Atom(IR.HALT));
+        return code;
     }
-
 }
 
 class Expr extends AST_Node {
-
+    Code getCode(){
+        return new Code();
+    }
 }
 
 class ExprList extends Expr {
     List<Expr> exprs;
 
-    List<AST_Node> getChildren(){
-        List<AST_Node> ret = new LinkedList<>();
-        for(Expr e : exprs)
-            ret.addAll(e.getChildren());
-        ret.add(this);
-        return ret;
-    }
 }
 
 class CallExpr extends Expr {
     FuncDecl func;
-    ExprList args;
+    ExprList arg;
 
+//    @Override
+//    Code getCode() {
+//        Code code = new Code();
+//        for(int i = 0; i < arg.exprs.size(); i++){
+//            code.append(arg.exprs.get(i).getCode());
+//            Atom a = new Atom();
+//            a.ins = code.isInt ? IR.STOREI : IR.STOREF;
+//            a.op1 = code.result;
+//            a.op2 = func.params.get(i).l_val;
+//
+//        }
+//
+//        code.append(new Atom(IR.JUMP, func.id));
+//        return code;
+//    }
 }
 
 class VarExpr extends Expr {
     Var var;
+
+    @Override
+    Code getCode() {
+        Code code = new Code();
+        code.result = var.l_val;
+        code.isInt = (var.type == Type.INT);
+        return code;
+    }
 }
 
 class BinExpr extends Expr {
@@ -118,58 +118,98 @@ class BinExpr extends Expr {
 
     }
 
+    OpType op;
+    IR ins;
     Expr left;
     Expr right;
-    OpType op;
 
-    List<AST_Node> getChildren(){
-        List<AST_Node> ret = new LinkedList<>();
-        ret.addAll(left.getChildren());
-        ret.addAll(right.getChildren());
-        ret.add(this);
+    IR getIns(boolean isIntOp){
+        switch(op){
+            case ADD: return isIntOp ? IR.ADDI : IR.ADDF;
+            case SUB: return isIntOp ? IR.SUBI : IR.SUBF;
+            case MUL: return isIntOp ? IR.MULTI : IR.MULTF;
+            case DIV: return isIntOp ? IR.DIVI : IR.DIVF;
+            default : return IR.ERROR;
+        }
+    }
+
+    Code getCode(){
+        Code leftCode = left.getCode();
+        Code rightCode = right.getCode();
+        Atom a = new Atom();
+        a.ins = getIns(leftCode.isInt);
+        a.op1 = leftCode.result;
+        a.op2 = rightCode.result;
+        String resLoc = SymbolTable.makeTemp();
+        a.op3 = resLoc;
+        Code ret = leftCode.append(rightCode).append(a);
+        ret.result = resLoc;
         return ret;
     }
+
 }
 
 class Int_Lit extends Expr {
-    int value;
+    String value;
+
+    @Override
+    Code getCode() {
+        Code code = new Code();
+        String resLoc = SymbolTable.makeTemp();
+        Atom a = new Atom();
+        a.ins = IR.STOREI;
+        a.op1 = value;
+        a.op2 = resLoc;
+        code.append(a);
+        code.isInt = true;
+        code.result = resLoc;
+        return code;
+    }
 }
 
 class Float_Lit extends Expr {
     String value;
+
+    @Override
+    Code getCode() {
+        Code code = new Code();
+        String resLoc = SymbolTable.makeTemp();
+        Atom a = new Atom();
+        a.ins = IR.STOREF;
+        a.op1 = value;
+        a.op2 = resLoc;
+        code.append(a);
+        code.isInt = false;
+        code.result = resLoc;
+        return code;
+    }
 }
 
 class CondExpr extends AST_Node {
 
-    enum CondType {
-        NE,
-        LE,
-        GE,
-        LT,
-        GT;
-
-        static CondType getType(String s){
-            switch(s){
-                case "!=": return NE;
-                case "<=": return LE;
-                case ">=": return GE;
-                case "<": return LT;
-                case ">": return GT;
-                default : return NE;
-            }
+    IR inverse(boolean isInt){
+        switch(type){
+            case "!=": return isInt ? IR.EQI : IR.EQ;
+            case "<=": return isInt ? IR.GTI : IR.GT;
+            case ">=": return isInt ? IR.LTI :IR.LT;
+            case "<": return isInt ? IR.GEI :IR.GE;
+            case ">": return isInt ? IR.LEI :IR.LE;
+            case "==": return isInt ? IR.NEI :IR.NE;
+            default : return IR.ERROR;
         }
     }
 
-    CondType type;
-    Expr left;
-    Expr right;
+    String type = null;
+    Expr left = null;
+    Expr right = null;
 
-    List<AST_Node> getChildren(){
-        List<AST_Node> ret = new LinkedList<>();
-        ret.addAll(left.getChildren());
-        ret.addAll(right.getChildren());
-        ret.add(this);
-        return ret;
+    Code getCode(String label){
+        Code lCode = left.getCode();
+        String op1 = lCode.result;
+        Code rCode = right.getCode();
+        String op2 = rCode.result;
+        Atom a = new Atom(inverse(lCode.isInt), op1, op2, label);
+        return lCode.append(rCode).append(a);
     }
 
 }
@@ -177,39 +217,70 @@ class CondExpr extends AST_Node {
 class StmtList extends  AST_Node {
     List<Stmt> stmts = new ArrayList<>();
 
-    List<AST_Node> getChildren(){
-        List<AST_Node> ret = new LinkedList<>();
+    @Override
+    Code getCode() {
+        Code code = new Code();
         for(Stmt s : stmts)
-            ret.addAll(s.getChildren());
-        return ret;
+            code.append(s.getCode());
+        return code;
     }
-
 }
 
-abstract class Stmt extends AST_Node {
-
-}
+abstract class Stmt extends AST_Node { }
 
 class ReadWriteStmt extends Stmt {
-    boolean isRead;
-    List<Var> args;
+    boolean isRead = false;
+    List<Var> args = new ArrayList<>();
+
+    @Override
+    Code getCode() {
+        Code code = new Code();
+        for(Var v : args){
+            Atom a = new Atom();
+            a.ins = getINS(v.type);
+            a.op1 = v.l_val;
+            code.append(a);
+        }
+        return code;
+    }
+
+    IR getINS(Type type){
+        if (type == Type.STRING)
+            return IR.WRITES;
+        else if(type == Type.INT)
+            return isRead ? IR.READI : IR.WRITEI;
+        else
+            return isRead ? IR.READF : IR.WRITEF;
+
+    }
+
 
 }
 
 class WhileStmt extends Stmt {
+
+    static int count = 0;
+
     SymbolTable table;
     CondExpr cond = null;
     VarDeclList decls = null;
     StmtList stmts = null;
 
-    List<AST_Node> getChildren(){
-        List<AST_Node> ret = new LinkedList<>();
-        ret.addAll(decls.getChildren());
-        ret.addAll(stmts.getChildren());
-        ret.add(this);
-        ret.addAll(cond.getChildren());
-        return ret;
+    @Override
+    Code getCode() {
+        int myNum = count++;
+
+        Code code = new Code();
+        String out = "OUTLOOP"+myNum;
+        String start = "LOOP"+myNum;
+        code.append(new Atom(IR.LABEL, out));
+        code.insert(new Atom(IR.JUMP, start));
+        code.insert(stmts.getCode());
+        code.insert(cond.getCode(out));
+        code.insert(new Atom(IR.LABEL, start));
+        return code;
     }
+
 }
 
 class IfStmt extends Stmt{
@@ -218,14 +289,26 @@ class IfStmt extends Stmt{
     StmtList body_then = null;
     ElsePart body_else = null;
 
-    List<AST_Node> getChildren(){
-        List<AST_Node> ret = new LinkedList<>();
-        ret.addAll(body_then.getChildren());
-        if (body_else != null)
-                ret.addAll(body_else.getChildren());
-        ret.add(this);
-        ret.addAll(cond.getChildren());
-        return ret;
+    static int count = 0;
+
+    @Override
+    Code getCode() {
+        int myNum = count++;
+        Code code = new Code();
+        String outLabel = "OUTIF"+myNum;
+        code.append(new Atom(IR.LABEL, outLabel));
+        if(body_else == null){
+            code.insert(body_then.getCode());
+            code.insert(cond.getCode(outLabel));
+        } else {
+            String elseLabel = "ELSE"+myNum;
+            code.insert(body_else.getCode());
+            code.insert(new Atom(IR.LABEL, elseLabel));
+            code.insert(new Atom(IR.JUMP, outLabel));
+            code.insert(body_then.getCode());
+            code.insert(cond.getCode(elseLabel));
+        }
+        return code;
     }
 }
 
@@ -234,57 +317,42 @@ class ElsePart extends Stmt {
     VarDeclList vars = null;
     StmtList stmts = null;
 
-    List<AST_Node> getChildren(){
-        List<AST_Node> ret = new LinkedList<>();
-        ret.addAll(vars.getChildren());
-        ret.addAll(stmts.getChildren());
-        ret.add(this);
-        return ret;
+    Code getCode(){
+        return stmts.getCode();
     }
+
 }
 
 class AssignStmt extends Stmt {
-    Var var;
-    Expr expr;
+    Var var = null;
+    Expr expr = null;
 
-    List<AST_Node> getChildren(){
-        List<AST_Node> ret  = new LinkedList<>();
-        ret.add(var);
-        ret.addAll(expr.getChildren());
-        ret.add(this);
-        return ret;
+    Code getCode(){
+        Code code = expr.getCode();
+        Atom a = new Atom();
+        a.ins = code.isInt ? IR.STOREI : IR.STOREF;
+        a.op1 = code.result;
+        a.op2 = var.l_val;
+        code.append(a);
+        code.result = var.l_val;
+        return code.append(a);
     }
+
+
 }
 
 class ReturnStmt extends Stmt {
-    Expr expr;
+    Expr expr = null;
 
-    List<AST_Node> getChildren(){
-        List<AST_Node> ret  = new LinkedList<>();
-        ret.addAll(expr.getChildren());
-        ret.add(this);
-        return ret;
+    Code getCode(){
+        Code code = expr.getCode();
+        String resLoc = code.result;
+        boolean isInt = code.isInt;
+        code.append(new Atom(IR.RET, code.result));
+        code.result = resLoc;
+        code.isInt = isInt;
+        return code;
     }
-
-}
-
-class Var extends AST_Node{
-    Type type;
-    String id;
-    String litVal;
-
-    Var(Type type, String id) {
-        this.type = type;
-        this.id = id;
-        litVal = null;
-    }
-
-    Var(String id, String lit) {
-        type = Type.STRING;
-        this.id = id;
-        this.litVal = lit;
-    }
-
 }
 
 

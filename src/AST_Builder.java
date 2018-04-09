@@ -28,8 +28,9 @@ class AST_Builder {
                 }
             } else if (ctx.string_decl() != null){
                 LittleParser.String_declContext strCtx = ctx.string_decl();
-                Var e = new Var(strCtx.id().getText(), strCtx.str().STRINGLITERAL().getText());
-                vars.add(e);
+                Var str = new Var(strCtx.id().getText(), strCtx.str().STRINGLITERAL().getText());
+                vars.add(str);
+                table.add(str);
             }
             ctx = ctx.decl();
         }
@@ -143,8 +144,7 @@ class AST_Builder {
 
     CondExpr create(LittleParser.CondContext ctx){
         CondExpr cond = new CondExpr();
-        cond.type = CondExpr.CondType.getType(
-                ctx.compop().getText());
+        cond.type = ctx.compop().getText();
         cond.left = create(ctx.expr(0));
         cond.right = create(ctx.expr(1));
         return cond;
@@ -165,7 +165,6 @@ class AST_Builder {
         } else if(ctx.read_stmt() != null) {
             ReadWriteStmt read = new ReadWriteStmt();
             read.isRead = true;
-            read.args = new ArrayList<>();
             List<String> ids = create(ctx.read_stmt().id_list());
             for(String id : ids)
                 read.args.add(table.getVarRef(id));
@@ -175,7 +174,6 @@ class AST_Builder {
         //write statement here
             ReadWriteStmt write = new ReadWriteStmt();
             write.isRead = false;
-            write.args = new ArrayList<>();
             List<String> ids = create(ctx.write_stmt().id_list());
             for(String id : ids)
                 write.args.add(table.getVarRef(id));
@@ -270,7 +268,7 @@ class AST_Builder {
             // CALL EXPR
             CallExpr call = new CallExpr();
             call.func = table.getFuncRef(ctx.call_expr().id().getText());
-            call.args = create(ctx.call_expr().expr_list());
+            call.arg = create(ctx.call_expr().expr_list());
             return call;
         } else {
             LittleParser.PrimaryContext prim = ctx.primary();
@@ -285,7 +283,7 @@ class AST_Builder {
             } else if(prim.INTLITERAL() != null){
             // INT LITERAL
                 Int_Lit lit = new Int_Lit();
-                lit.value = Integer.valueOf(prim.INTLITERAL().getText());
+                lit.value = prim.INTLITERAL().getText();
                 return lit;
             } else {
             // FLOAT LITERAL

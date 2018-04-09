@@ -1,7 +1,5 @@
 import org.antlr.v4.runtime.*;
 
-import java.util.List;
-
 public class Driver{
 
     public static void main(String[] args) throws Exception {
@@ -18,13 +16,8 @@ public class Driver{
         AST_Builder builder = new AST_Builder();
         Program p = builder.create(parser.program());
 
-        System.out.println("AST build complete.");
-        List<AST_Node> nodeList = p.getChildren();
-
-        for(AST_Node node : nodeList){
-            System.out.println(node.toString());
-        }
-
+        Code code = p.getCode();
+        code.print();
     }
 
 }

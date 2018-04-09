@@ -9,7 +9,8 @@ BEGIN
 	    INT c;
         c := 2;
 
-		--WRITE (a, newline);
-		--WRITE (b, newline);
+		WRITE (a, newline);
+		WRITE (b, newline);
+		WRITE(c);
 	END
 END
