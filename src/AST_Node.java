@@ -46,6 +46,8 @@ class FuncDecl extends AST_Node {
         code.append(new Atom(IR.LABEL, id));
         code.append(new Atom(IR.LINK));
         code.append(stmts.getCode());
+        if(id.equals("main"))
+            code.append(new Atom(IR.RET));
         return code;
     }
 }
@@ -111,13 +113,10 @@ class BinExpr extends Expr {
                 case '/' : return DIV;
                 default : return NULL;
             }
-
         }
-
     }
 
     OpType op;
-    IR ins;
     Expr left;
     Expr right;
 
@@ -140,7 +139,10 @@ class BinExpr extends Expr {
         a.op2 = rightCode.result;
         String resLoc = SymbolTable.makeTemp();
         a.op3 = resLoc;
-        Code ret = leftCode.append(rightCode).append(a);
+        Code ret = new Code();
+        ret.append(leftCode);
+        ret.append(rightCode);
+        ret.append(a);
         ret.result = resLoc;
         return ret;
     }

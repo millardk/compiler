@@ -65,11 +65,13 @@ class Code {
     }
 
     void print(){
+        System.out.println(";IR code");
         Atom cur = start;
         while(cur != null){
-            System.out.println(cur.toString());
+            System.out.println(';'+cur.toString());
             cur = cur.next;
         }
+        System.out.println(";tiny code");
     }
 
 }

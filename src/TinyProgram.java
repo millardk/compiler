@@ -93,7 +93,7 @@ public class TinyProgram {
                 case LABEL: return new TinyIns("label", a.op1.toLowerCase());
                 case JUMP: return new TinyIns("jmp", a.op1.toLowerCase());
                 case LINK: ; return null;
-                case RET: ;
+                case RET: ; return null;
                 case ERROR: ;
                 default: return new TinyIns("this shouldn't be here.");
             }
