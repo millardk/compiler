@@ -18,8 +18,14 @@ public class TinyProgram {
         void convertProg(Code code, List<Var> vars) {
             for (Var var : vars) {
                 TinyIns ins = new TinyIns();
-                ins.type = (var.type == Type.STRING) ? "str" : "var";
                 ins.op1 = var.id;
+                if (var.type == Type.STRING) {
+                    ins.type = "str";
+                    ins.op2 = var.litVal;
+                } else {
+                    ins.type = "var";
+                }
+
                 insList.add(ins);
             }
             Atom atom = code.start;
@@ -35,7 +41,7 @@ public class TinyProgram {
             }
 
             insList.add(new TinyIns("sys", "halt"));
-            insList.add(new TinyIns("end"));
+//            insList.add(new TinyIns("end"));
             changeToRegs();
         }
 
