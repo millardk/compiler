@@ -15,8 +15,6 @@ public class TinyProgram {
 
     private class TinyConverter {
 
-        private int regCount = 0;
-
         void convertProg(Code code, List<Var> vars) {
             for (Var var : vars) {
                 TinyIns ins = new TinyIns();
@@ -73,8 +71,13 @@ public class TinyProgram {
                 case EQI: ins = "jeq"; break;
             }
             if (a.ins.ordinal() <= 19) {
-                list.add(new TinyIns(ins, a.op1, a.op2));
-                list.add(new TinyIns("move", a.op2, a.op3));
+                if(isTemp(a.op1)) {
+                    list.add(new TinyIns("move", a.op1, a.op3));
+                    list.add(new TinyIns(ins, a.op2, a.op3));
+                } else {
+                    list.add(new TinyIns("move", a.op2, a.op3));
+                    list.add(new TinyIns(ins, a.op1, a.op3));
+                }
             } else {
                 String ins2 = (a.ins.ordinal() <= 25) ? "cmpr" : "cmpi";
                 list.add(new TinyIns(ins2, a.op1, a.op2));
@@ -102,13 +105,17 @@ public class TinyProgram {
         }
 
         private void changeToRegs(){
-            regCount = 0;
             for(TinyIns ins : insList) {
                 if(ins.op1 != null)
                     ins.op1 = toReg(ins.op1);
                 if(ins.op2 != null)
                     ins.op2 = toReg(ins.op2);
             }
+        }
+
+        private boolean isTemp(String op){
+            assert(op != null);
+            return op.charAt(0) == '$';
         }
 
         private String toReg(String op){
