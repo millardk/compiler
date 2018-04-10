@@ -4,7 +4,7 @@ public class Driver{
 
     public static void main(String[] args) throws Exception {
 
-        String path = "./tests/step4/mytest2.txt";
+        String path = "./tests/step4/test1.txt";
         System.out.println("Compiling "+path);
 
         CharStream cs = CharStreams.fromFileName(path);

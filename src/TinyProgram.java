@@ -15,6 +15,11 @@ public class TinyProgram {
 
     private class TinyConverter {
 
+        private HashMap<String,String> regMap = new HashMap<>();
+        int regNum = 0;
+//        private HashMap<String, String> labelMap = new HashMap<>();
+//        int labelNum = 1;
+
         void convertProg(Code code, List<Var> vars) {
             for (Var var : vars) {
                 TinyIns ins = new TinyIns();
@@ -42,7 +47,8 @@ public class TinyProgram {
 
             insList.add(new TinyIns("sys", "halt"));
 //            insList.add(new TinyIns("end"));
-            changeToRegs();
+//            labelMap.put("main", "main");
+            convSymbols();
         }
 
         TinyIns convert(Atom a) {
@@ -124,13 +130,32 @@ public class TinyProgram {
             }
             return list;
         }
+//
+//        private void convSymbols(){
+//            for(TinyIns ins : insList) {
+//                if(ins.type.equals("label")) {
+//                    if(!labelMap.containsKey(ins.op1))
+//                        labelMap.put(ins.op1, "label"+labelNum++);
+//                    ins.op1 = labelMap.get(ins.op1);
+//                    continue;
+//                }
+//                if(ins.op1 != null)
+//                    ins.op1 = convTemp(ins.op1);
+//                if(ins.op2 != null)
+//                    ins.op2 = convTemp(ins.op2);
+//            }
+//            for(TinyIns ins : insList)
+//                if(ins.type.charAt(0) == 'j')
+//                    ins.op1 = labelMap.get(ins.op1);
+//
+//        }
 
-        private void changeToRegs(){
+        private void convSymbols(){
             for(TinyIns ins : insList) {
-                if(ins.op1 != null)
-                    ins.op1 = toReg(ins.op1);
-                if(ins.op2 != null)
-                    ins.op2 = toReg(ins.op2);
+                if (ins.op1 != null)
+                    ins.op1 = convTemp(ins.op1);
+                if (ins.op2 != null)
+                    ins.op2 = convTemp(ins.op2);
             }
         }
 
@@ -139,12 +164,15 @@ public class TinyProgram {
             return op.charAt(0) == '$';
         }
 
-        private String toReg(String op){
-            if (op.charAt(0) == '$')
-                return 'r'+op.substring(2);
-            else
+        private String convTemp(String op){
+            if (isTemp(op)){
+                if(!regMap.containsKey(op))
+                    regMap.put(op, "r"+regNum++);
+                return regMap.get(op);
+            } else
                 return op;
         }
+
 
         //        // TODO scan the IR to recognize globals
 //        private Set<String> getGlobals(Code code){

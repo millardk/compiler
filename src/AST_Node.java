@@ -130,6 +130,35 @@ class BinExpr extends Expr {
         }
     }
 
+    void insert(BinExpr bin){
+        OpType op1;
+        OpType op2;
+        if(op == OpType.MUL || op == OpType.DIV) {
+            op1 = OpType.MUL;
+            op2 = OpType.DIV;
+        } else {
+            op1 = OpType.ADD;
+            op2 = OpType.SUB;
+        }
+
+        BinExpr cur = this;
+        while (cur.left != null && cur.left.getClass() == BinExpr.class) {
+            BinExpr temp = (BinExpr) cur.left;
+            if (temp.op == op1 || temp.op == op2)
+                cur = temp;
+            else break;
+        }
+        bin.right = cur.left;
+        cur.left = bin;
+    }
+
+
+
+    BinExpr(Expr expr, String op){
+        left = expr;
+        this.op = OpType.getType(op);
+    }
+
     Code getCode(){
         Code leftCode = left.getCode();
         Code rightCode = right.getCode();

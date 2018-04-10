@@ -145,8 +145,8 @@ class AST_Builder {
     CondExpr create(LittleParser.CondContext ctx){
         CondExpr cond = new CondExpr();
         cond.type = ctx.compop().getText();
-        cond.left = create(ctx.expr(0));
-        cond.right = create(ctx.expr(1));
+        cond.left = createExpr(ctx.expr(0));
+        cond.right = createExpr(ctx.expr(1));
         return cond;
     }
 
@@ -154,12 +154,12 @@ class AST_Builder {
         if (ctx.assign_stmt() != null){
             AssignStmt stmt = new AssignStmt();
             stmt.var = table.getVarRef(ctx.assign_stmt().assign_expr().id().getText());
-            stmt.expr = create(ctx.assign_stmt().assign_expr().expr());
+            stmt.expr = createExpr(ctx.assign_stmt().assign_expr().expr());
             return stmt;
 
         }  else if(ctx.return_stmt() != null) {
             ReturnStmt stmt = new ReturnStmt();
-            stmt.expr = create(ctx.return_stmt().expr());
+            stmt.expr = createExpr(ctx.return_stmt().expr());
             return stmt;
 
         } else if(ctx.read_stmt() != null) {
@@ -204,57 +204,60 @@ class AST_Builder {
 
     ExprList create(LittleParser.Expr_listContext ctx){
         ExprList list = new ExprList();
-        list.exprs.add(create(ctx.expr()));
+        list.exprs.add(createExpr(ctx.expr()));
 
         LittleParser.Expr_list_tailContext tail = ctx.expr_list_tail();
         while(tail.expr() != null){
-            list.exprs.add(create(tail.expr()));
+            list.exprs.add(createExpr(tail.expr()));
         }
         return list;
     }
 
-    Expr create(LittleParser.ExprContext ctx){
-        BinExpr bin = createExprPrefix(ctx.expr_prefix(), ctx.factor());
-        if(bin == null)
-            return create(ctx.factor());
-        return bin;
-    }
-
-    BinExpr createExprPrefix(LittleParser.Expr_prefixContext ctx, LittleParser.FactorContext fctx){
-        if(ctx.children == null)
-            return null;
-
-        BinExpr bin = new BinExpr();
-        bin.op = BinExpr.OpType.getType(ctx.addop().getText());
-        bin.left = createExprPrefix(ctx.expr_prefix(),fctx);
-        bin.right = create(ctx.factor());
-        if(bin.left == null)
-            bin.left = create(fctx);
-        return bin;
-    }
-
-    Expr create(LittleParser.FactorContext ctx){
-        BinExpr bin = create(ctx.factor_prefix());
-        if(bin == null){
-            return create(ctx.postfix_expr());
+    Expr createExpr(LittleParser.ExprContext ctx){
+        BinExpr bin = createExprPrefix(ctx.expr_prefix());
+        if(bin == null) {
+            return makeFactor(ctx.factor());
         } else {
-            bin.right = create(ctx.postfix_expr());
+            bin.right = makeFactor(ctx.factor());
             return bin;
         }
     }
 
-    BinExpr create(LittleParser.Factor_prefixContext ctx){
-        if(ctx.mulop() == null)
+    BinExpr createExprPrefix(LittleParser.Expr_prefixContext ctx){
+        if(ctx.children == null)
             return null;
-        BinExpr ret = new BinExpr();
-        ret.op = BinExpr.OpType.getType(ctx.mulop().getText());
-        ret.left = create(ctx.factor_prefix());
-        if(ret.left != null){
-            ((BinExpr)ret.left).right = create(ctx.postfix_expr());
+        BinExpr root = createExprPrefix(ctx.expr_prefix());
+        BinExpr self = new BinExpr(makeFactor(ctx.factor()), ctx.addop().getText());
+        if(root == null){
+            return self;
         } else {
-            ret.left = create(ctx.postfix_expr());
+          root.insert(self);
+          return root;
         }
-        return ret;
+    }
+
+    Expr makeFactor(LittleParser.FactorContext ctx){
+        BinExpr pre = makeFactorPrefix(ctx.factor_prefix());
+        if(pre == null)
+            return create(ctx.postfix_expr());
+        else {
+            pre.right = create(ctx.postfix_expr());
+            return pre;
+        }
+    }
+
+    BinExpr makeFactorPrefix(LittleParser.Factor_prefixContext ctx){
+        if(ctx.children == null)
+            return null;
+
+        BinExpr root = makeFactorPrefix(ctx.factor_prefix());
+        BinExpr self = new BinExpr(create(ctx.postfix_expr()), ctx.mulop().getText());
+        if(root == null){
+            return self;
+        } else {
+            root.insert(self);
+            return root;
+        }
     }
 
     Expr create(LittleParser.Postfix_exprContext ctx){
@@ -268,7 +271,7 @@ class AST_Builder {
             LittleParser.PrimaryContext prim = ctx.primary();
             if (prim.expr() != null)
             // EXPR
-                return create(prim.expr());
+                return createExpr(prim.expr());
             else if(prim.id() != null){
             // VAR REF
                 VarExpr var = new VarExpr();

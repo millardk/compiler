@@ -3,7 +3,7 @@ import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 /**
  * This class provides an empty implementation of {@link LittleVisitor},
- * which can be extended to create a visitor which only needs to handle a subset
+ * which can be extended to createExpr a visitor which only needs to handle a subset
  * of the available methods.
  *
  * @param <T> The return type of the visit operation. Use {@link Void} for

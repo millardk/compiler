@@ -1,13 +1,12 @@
 PROGRAM step4
 BEGIN
 
-	INT a, b, c;
+	INT a, b, c, d, e;
 
 	FUNCTION VOID main()
 	BEGIN
 
-        c := 0-a+b
-
+        c := a-b*2+0-d;
 
 	END
 END
