@@ -1,0 +1,13 @@
+PROGRAM step4
+BEGIN
+
+	INT a, b, c, d;
+
+	FUNCTION VOID main()
+	BEGIN
+
+        a := b+c*d;
+
+
+	END
+END

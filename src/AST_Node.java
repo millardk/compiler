@@ -116,9 +116,9 @@ class BinExpr extends Expr {
         }
     }
 
-    OpType op;
-    Expr left;
-    Expr right;
+    OpType op = null;
+    Expr left = null;
+    Expr right = null;
 
     IR getIns(boolean isIntOp){
         switch(op){

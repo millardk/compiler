@@ -40,7 +40,7 @@ class Code {
         if (start == null) {
             start = code.start;
             end = code.end;
-        } else {
+        } else if(code.start != null){
             end.next = code.start;
             end = code.end;
         }

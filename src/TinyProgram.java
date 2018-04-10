@@ -15,6 +15,8 @@ public class TinyProgram {
 
     private class TinyConverter {
 
+        private int regCount = 0;
+
         void convertProg(Code code, List<Var> vars) {
             for (Var var : vars) {
                 TinyIns ins = new TinyIns();
@@ -100,6 +102,7 @@ public class TinyProgram {
         }
 
         private void changeToRegs(){
+            regCount = 0;
             for(TinyIns ins : insList) {
                 if(ins.op1 != null)
                     ins.op1 = toReg(ins.op1);

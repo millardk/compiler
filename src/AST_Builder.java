@@ -214,28 +214,22 @@ class AST_Builder {
     }
 
     Expr create(LittleParser.ExprContext ctx){
-        BinExpr bin = createExprPrefix(ctx.expr_prefix());
-        if(bin != null){
-            bin.right = create(ctx.factor());
-            return bin;
-        } else {
+        BinExpr bin = createExprPrefix(ctx.expr_prefix(), ctx.factor());
+        if(bin == null)
             return create(ctx.factor());
-        }
+        return bin;
     }
 
-    BinExpr createExprPrefix(LittleParser.Expr_prefixContext ctx){
-        if(ctx.factor() == null)
+    BinExpr createExprPrefix(LittleParser.Expr_prefixContext ctx, LittleParser.FactorContext fctx){
+        if(ctx.children == null)
             return null;
 
         BinExpr bin = new BinExpr();
         bin.op = BinExpr.OpType.getType(ctx.addop().getText());
-        bin.left = createExprPrefix(ctx.expr_prefix());
-        if (bin.left != null){
-            ((BinExpr)bin.left).right = create(ctx.factor());
-        } else {
-            bin.left = create(ctx.factor());
-        }
-
+        bin.left = createExprPrefix(ctx.expr_prefix(),fctx);
+        bin.right = create(ctx.factor());
+        if(bin.left == null)
+            bin.left = create(fctx);
         return bin;
     }
 
