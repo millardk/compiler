@@ -132,8 +132,6 @@ class Atom {
 }
 
 enum IR{
-    STOREI,
-    STOREF,
     READI,
     READF,
     WRITEI,
@@ -144,6 +142,8 @@ enum IR{
     LINK,
     RET,
     ERROR,
+    STOREI,
+    STOREF,
     ADDI,
     SUBI,
     MULTI,

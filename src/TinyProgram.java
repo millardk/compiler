@@ -30,7 +30,7 @@ public class TinyProgram {
             }
             Atom atom = code.start;
             while (atom != null) {
-                if (atom.ins.ordinal() <= 11) {
+                if (atom.ins.ordinal() <= 9) {
                     TinyIns ins = convert(atom);
                     if (ins != null)
                         insList.add(ins);
@@ -45,10 +45,28 @@ public class TinyProgram {
             changeToRegs();
         }
 
+        TinyIns convert(Atom a) {
+            switch (a.ins) {
+                case READI: return new TinyIns("sys", "readi", a.op1);
+                case READF: return new TinyIns("sys", "readr", a.op1);
+                case WRITEI: return new TinyIns("sys", "writei", a.op1);
+                case WRITEF: return new TinyIns("sys", "writer", a.op1);
+                case WRITES: return new TinyIns("sys", "writes", a.op1);
+                case LABEL: return new TinyIns("label", a.op1.toLowerCase());
+                case JUMP: return new TinyIns("jmp", a.op1.toLowerCase());
+                case LINK: ; return null;
+                case RET: ; return null;
+                case ERROR: ;
+                default : return new TinyIns("this shouldn't be here.");
+            }
+        }
+
         List<TinyIns> convertList(Atom a) {
             List<TinyIns> list = new LinkedList<>();
             String ins = null;
-            switch (a.ins) {
+                switch (a.ins) {
+                case STOREI: ;
+                case STOREF: ins = "move"; break;
                 case ADDI: ins = "addi"; break;
                 case SUBI: ins = "subi"; break;
                 case MULTI: ins = "muli"; break;
@@ -70,38 +88,41 @@ public class TinyProgram {
                 case NEI: ins = "jne"; break;
                 case EQI: ins = "jeq"; break;
             }
-            if (a.ins.ordinal() <= 19) {
-                if(isTemp(a.op1)) {
+
+            if (a.ins.ordinal() <= 9) {
+                System.out.println("WTF");
+                return list;
+            }
+
+            if (a.ins == IR.STOREI || a.ins == IR.STOREF) {
+                // STORE COMMANDS
+                if (isTemp(a.op2) || isTemp(a.op1)) {
+                    list.add(new TinyIns(ins, a.op1, a.op2));
+                } else {
+                    String resultReg = SymbolTable.makeTemp();
+                    list.add(new TinyIns(ins, a.op1, resultReg));
+                    list.add(new TinyIns(ins, resultReg, a.op2));
+                }
+            } else if (a.ins.ordinal() <= 19) {
+                // ARITHMETIC COMMANDS
+                if(a.ins == IR.DIVF || a.ins == IR.DIVI){
+                    list.add(new TinyIns("move", a.op1, a.op3));
+                    list.add(new TinyIns(ins, a.op2, a.op3));
+                } else if (isTemp(a.op1)) {
                     list.add(new TinyIns("move", a.op1, a.op3));
                     list.add(new TinyIns(ins, a.op2, a.op3));
                 } else {
                     list.add(new TinyIns("move", a.op2, a.op3));
                     list.add(new TinyIns(ins, a.op1, a.op3));
                 }
+
             } else {
+                // COMPARE COMMANDS
                 String ins2 = (a.ins.ordinal() <= 25) ? "cmpr" : "cmpi";
                 list.add(new TinyIns(ins2, a.op1, a.op2));
                 list.add(new TinyIns(ins, a.op3.toLowerCase()));
             }
             return list;
-        }
-
-        TinyIns convert(Atom a) {
-            switch (a.ins) {
-                case STOREI: return new TinyIns("move", a.op1, a.op2);
-                case STOREF: return new TinyIns("move", a.op1, a.op2);
-                case READI: return new TinyIns("sys", "readi", a.op1);
-                case READF: return new TinyIns("sys", "readr", a.op1);
-                case WRITEI: return new TinyIns("sys", "writei", a.op1);
-                case WRITEF: return new TinyIns("sys", "writer", a.op1);
-                case WRITES: return new TinyIns("sys", "writes", a.op1);
-                case LABEL: return new TinyIns("label", a.op1.toLowerCase());
-                case JUMP: return new TinyIns("jmp", a.op1.toLowerCase());
-                case LINK: ; return null;
-                case RET: ; return null;
-                case ERROR: ;
-                default: return new TinyIns("this shouldn't be here.");
-            }
         }
 
         private void changeToRegs(){

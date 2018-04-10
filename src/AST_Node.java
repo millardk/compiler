@@ -194,7 +194,7 @@ class CondExpr extends AST_Node {
             case ">=": return isInt ? IR.LTI :IR.LT;
             case "<": return isInt ? IR.GEI :IR.GE;
             case ">": return isInt ? IR.LEI :IR.LE;
-            case "==": return isInt ? IR.NEI :IR.NE;
+            case "=": return isInt ? IR.NEI :IR.NE;
             default : return IR.ERROR;
         }
     }
@@ -337,7 +337,6 @@ class AssignStmt extends Stmt {
         code.result = var.l_val;
         return code.append(a);
     }
-
 
 }
 

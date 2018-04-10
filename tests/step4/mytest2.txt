@@ -1,12 +1,12 @@
 PROGRAM step4
 BEGIN
 
-	INT a, b, c, d;
+	INT a, b, c;
 
 	FUNCTION VOID main()
 	BEGIN
 
-        a := b+c*d;
+        c := 0-a+b
 
 
 	END
