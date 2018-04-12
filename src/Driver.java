@@ -4,7 +4,7 @@ public class Driver{
 
     public static void main(String[] args) throws Exception {
 
-        String path = "./tests/step4/test1.txt";
+        String path = "./tests/step4/test5.txt";
         System.out.println("Compiling "+path);
 
         CharStream cs = CharStreams.fromFileName(path);
@@ -19,8 +19,11 @@ public class Driver{
         Code code = p.getCode();
         code.print();
         System.out.println("------------------TINY-CODE------------------");
+
         TinyProgram tiny = new TinyProgram(code, p.table.varlist);
         tiny.print();
+
+
     }
 
 }

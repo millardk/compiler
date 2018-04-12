@@ -110,17 +110,9 @@ public class TinyProgram {
                     list.add(new TinyIns(ins, resultReg, a.op2));
                 }
             } else if (a.ins.ordinal() <= 19) {
-                // ARITHMETIC COMMANDS
-                if(a.ins == IR.DIVF || a.ins == IR.DIVI){
-                    list.add(new TinyIns("move", a.op1, a.op3));
-                    list.add(new TinyIns(ins, a.op2, a.op3));
-                } else if (isTemp(a.op1)) {
-                    list.add(new TinyIns("move", a.op1, a.op3));
-                    list.add(new TinyIns(ins, a.op2, a.op3));
-                } else {
-                    list.add(new TinyIns("move", a.op2, a.op3));
-                    list.add(new TinyIns(ins, a.op1, a.op3));
-                }
+                // Arithmetic instructions
+                list.add(new TinyIns("move", a.op1, a.op3));
+                list.add(new TinyIns(ins, a.op2, a.op3));
 
             } else {
                 // COMPARE COMMANDS
